@@ -51,8 +51,6 @@ Serveur gRPC démarré sur 0.0.0.0:50051
 
 ### 1. Fichier (`hello.proto`) 
 
-Ce fichier définit un service gRPC appelé  **`Greeter`** avec une seule méthode :
-
 ```js
 syntax = "proto3";
 package hello;
@@ -66,6 +64,8 @@ message HelloReply {
     string message = 1;
 }
 ```
+
+Ce fichier définit un service gRPC appelé  **`Greeter`** avec une seule méthode :
 
 ```js
 rpc SayHello (HelloRequest) returns (HelloReply);
