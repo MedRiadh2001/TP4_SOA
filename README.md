@@ -128,7 +128,7 @@ Si un client envoie une requête avec :
 }
 ```
 
-Le serveur renverra :1
+Le serveur renverra :
 
 ```json
 {
