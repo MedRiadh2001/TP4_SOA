@@ -21,12 +21,6 @@ Ce projet montre comment mettre en place un serveur gRPC simple en Node.js. Il e
   - `@grpc/proto-loader`
 ---
 
-## 📦 Installation
-
-```bash
-npm install @grpc/grpc-js @grpc/proto-loader
-```
-
 ## ▶️ Lancement du serveur
 
 1. Clonez ce dépôt sur votre machine locale :
@@ -57,8 +51,6 @@ Serveur gRPC démarré sur 0.0.0.0:50051
 
 ### 1. Fichier (`hello.proto`) 
 
-Ce fichier définit un service gRPC appelé  **`Greeter`** avec une seule méthode :
-
 ```js
 syntax = "proto3";
 package hello;
@@ -73,6 +65,8 @@ message HelloReply {
 }
 ```
 
+Ce fichier définit un service gRPC appelé  **`Greeter`** avec une seule méthode :
+
 ```js
 rpc SayHello (HelloRequest) returns (HelloReply);
 ```
@@ -80,6 +74,43 @@ rpc SayHello (HelloRequest) returns (HelloReply);
  - **`HelloReply`** : message contenant un champ **`message`** (la réponse personnalisée).
 
 ### 2. Fichier (`server.js`)
+
+```js
+const grpc = require("@grpc/grpc-js");
+const protoLoader = require("@grpc/proto-loader");
+const path = require("path");
+const PROTO_PATH = path.join(__dirname, "hello.proto");
+
+const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
+  keepCase: true,
+  longs: String,
+  enums: String,
+  defaults: true,
+  oneofs: true,
+});
+
+const helloProto = grpc.loadPackageDefinition(packageDefinition).hello;
+
+function sayHello(call, callback) {
+  const { name } = call.request;
+  const reply = { message: `Bonjour, ${name} !` };
+  callback(null, reply);
+}
+
+function main() {
+  const server = new grpc.Server();
+  server.addService(helloProto.Greeter.service, {
+    SayHello: sayHello,
+  });
+  const port = "0.0.0.0:50051";
+  server.bindAsync(port, grpc.ServerCredentials.createInsecure(), () => {
+    console.log(`Serveur gRPC démarré sur ${port}`);
+  });
+}
+
+main();
+```
+
 Voici les grandes étapes du serveur :
 
  - Chargement du fichier **`.proto`** avec **`protoLoader`**.
@@ -97,7 +128,7 @@ Si un client envoie une requête avec :
 }
 ```
 
-Le serveur renverra :1
+Le serveur renverra :
 
 ```json
 {
