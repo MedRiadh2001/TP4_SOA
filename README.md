@@ -111,8 +111,6 @@ function main() {
 main();
 ```
 
-```js
-
 Voici les grandes étapes du serveur :
 
  - Chargement du fichier **`.proto`** avec **`protoLoader`**.
